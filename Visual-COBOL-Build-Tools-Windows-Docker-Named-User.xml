@@ -1,0 +1,350 @@
+<LicenseList><APLicense>
+    <licenseVersion>1.0</licenseVersion>
+    <licenseID>9fe418eb-e272-45e4-bc08-d7a88d231565</licenseID>
+    <keyID>26e54ea1e6a5e48f3b83a9ca2531fc62fe8a4d61~f211abdfd4a9ef7f3e3143fe540cff378d8fd116</keyID>
+    <productInfo>Ec1Bl1ewdMGheryhNYzqqlc57f6dwdHFMIEiFbKOFTk=</productInfo>
+    <ltu>1</ltu>
+    <creation>04/12/2023T14:50:20+0000</creation>
+    <activation>04/12/2023T00:00:00+0000</activation>
+    <expiration type="date">03/02/2024T00:00:00+0000</expiration>
+    <capacity uom="Named User">1</capacity>
+    <validity>permanent</validity>
+    <origin>
+        <system>SE</system>
+        <user>saiganesh000123@gmail.com</user>
+        <orderID>TO-121171</orderID>
+        <SAID>SUB+TO-121171</SAID>
+    </origin>
+    <constraints>
+        <lockList>
+            <lock type="ipAddress">*.*.*.*</lock>
+        </lockList>
+    </constraints>
+    <attributeList>
+        <attribute>
+            <name>License Group</name>
+            <valueList>
+                <value>Visual-COBOL-Eclipse-Build-Tools-Docker-Named-User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>License Type</name>
+            <valueList>
+                <value>Named User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Ordered Product</name>
+            <valueList>
+                <value>Visual COBOL for Eclipse Named User Windows WebEval SW E-LTU</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Product Code</name>
+            <valueList>
+                <value>EV-AA133</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Serial Number</name>
+            <valueList>
+                <value>202312051437280</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Environment Type</name>
+            <valueList>
+                <value>PRODUCTION</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>End Customer</name>
+            <valueList>
+                <value>Naga Sai Ganesh_Athukuri_Personal_Account</value>
+            </valueList>
+        </attribute>
+    </attributeList>
+    <description>NativeRuntimeDocker</description>
+    <signature>MpNmya7POBJt+Ca4LpMpz5+97oxgGZKpXfbilDvvsEx0ZrcOuBgblrupThpgOoNQPY8ZSri4JZp95Zugb9wmXdEHZ/zovFLdtb4pNSmUAxFeb+N6Fta+te9CMQ2tO+VyxLSio2wK7FBq588XsB4uMFiJpR5pKFlKJuy25mk2LKylwbrVoQAtBx1jv1gFgNL8tdUh0YjfV6S1Y7gCaTFBQ/SsZgiQhtMwbNNpdG0vqx/1iI5fHzJlUbWmAjA4+n2+XS6v83PtBXs3u7c0XwnmTns4yMdoiRCgdQHsxCiEy0VWzwaQj7c53N+rN1y9XAZWWb1VKJctkFhUcOpR4DTYhg==</signature>
+</APLicense>
+
+<APLicense>
+    <licenseVersion>1.0</licenseVersion>
+    <licenseID>451e046c-45c9-4661-8d32-1f3fcd0f71de</licenseID>
+    <keyID>26e54ea1e6a5e48f3b83a9ca2531fc62fe8a4d61~f211abdfd4a9ef7f3e3143fe540cff378d8fd116</keyID>
+    <productInfo>8HZnRl9dy5OWyaReHUJEoyfHd8qaeKFBGlX9BmWnvNY=</productInfo>
+    <ltu>1</ltu>
+    <creation>04/12/2023T14:50:21+0000</creation>
+    <activation>04/12/2023T00:00:00+0000</activation>
+    <expiration type="date">03/02/2024T00:00:00+0000</expiration>
+    <capacity uom="Named User">1</capacity>
+    <validity>permanent</validity>
+    <origin>
+        <system>SE</system>
+        <user>saiganesh000123@gmail.com</user>
+        <orderID>TO-121171</orderID>
+        <SAID>SUB+TO-121171</SAID>
+    </origin>
+    <constraints>
+        <lockList>
+            <lock type="ipAddress">*.*.*.*</lock>
+        </lockList>
+    </constraints>
+    <attributeList>
+        <attribute>
+            <name>License Group</name>
+            <valueList>
+                <value>Visual-COBOL-Eclipse-Build-Tools-Docker-Named-User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>License Type</name>
+            <valueList>
+                <value>Named User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Ordered Product</name>
+            <valueList>
+                <value>Visual COBOL for Eclipse Named User Windows WebEval SW E-LTU</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Product Code</name>
+            <valueList>
+                <value>EV-AA133</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Serial Number</name>
+            <valueList>
+                <value>202312051437280</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Environment Type</name>
+            <valueList>
+                <value>PRODUCTION</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>End Customer</name>
+            <valueList>
+                <value>Naga Sai Ganesh_Athukuri_Personal_Account</value>
+            </valueList>
+        </attribute>
+    </attributeList>
+    <description>SOADevelopmentDocker</description>
+    <signature>OzXDvL7jQVhbYalNX47Fyr5BTqk0MjrgReGRYqqDmlDKTjT3TCTCLE1eqJEKP/zHJ9JPtdRBMgCoIkSptkoO5Uskrfn/v5zGMm8hK3Ab0T+LbR77Fx6H5y+zLMHsTO/9YElgN4uKv3MlIdZdc4Ds27Or09XndYFYDvfqmaR0HuFResxb+es76xJXteYpxGBd0pd4b2ma6DD9ieD/PNWTyicqm2b1E/GNOPBUim/zMJjdxsqOPE+B+leVsMGF7wU6pOB9Dr8CSVi5dIn9payEQFoiWpZHyh0qCbgyZQSqycm0GiLVBelZ8ITSENbzsxvscc6rTL3yiqnmj9w6D3E9wg==</signature>
+</APLicense>
+
+<APLicense>
+    <licenseVersion>1.0</licenseVersion>
+    <licenseID>c89e6543-594d-47ec-86af-d2c74c4ed3c3</licenseID>
+    <keyID>26e54ea1e6a5e48f3b83a9ca2531fc62fe8a4d61~f211abdfd4a9ef7f3e3143fe540cff378d8fd116</keyID>
+    <productInfo>urFrUxpi5xQT3Z6xgQqAX76bNqV0Gn2HnwVLx4RM6kM=</productInfo>
+    <ltu>1</ltu>
+    <creation>04/12/2023T14:50:21+0000</creation>
+    <activation>04/12/2023T00:00:00+0000</activation>
+    <expiration type="date">03/02/2024T00:00:00+0000</expiration>
+    <capacity uom="Named User">1</capacity>
+    <validity>permanent</validity>
+    <origin>
+        <system>SE</system>
+        <user>saiganesh000123@gmail.com</user>
+        <orderID>TO-121171</orderID>
+        <SAID>SUB+TO-121171</SAID>
+    </origin>
+    <constraints>
+        <lockList>
+            <lock type="ipAddress">*.*.*.*</lock>
+        </lockList>
+    </constraints>
+    <attributeList>
+        <attribute>
+            <name>License Group</name>
+            <valueList>
+                <value>Visual-COBOL-Eclipse-Build-Tools-Docker-Named-User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>License Type</name>
+            <valueList>
+                <value>Named User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Ordered Product</name>
+            <valueList>
+                <value>Visual COBOL for Eclipse Named User Windows WebEval SW E-LTU</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Product Code</name>
+            <valueList>
+                <value>EV-AA133</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Serial Number</name>
+            <valueList>
+                <value>202312051437280</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Environment Type</name>
+            <valueList>
+                <value>PRODUCTION</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>End Customer</name>
+            <valueList>
+                <value>Naga Sai Ganesh_Athukuri_Personal_Account</value>
+            </valueList>
+        </attribute>
+    </attributeList>
+    <description>NativeCheckerDocker</description>
+    <signature>QZghdRF4lqBKm0Rm66PKN/o+1wFcmyzmQNr2GH8kUDHNN5JvfO6Lq1+g7X80IHtbnVVa8h06hPF+hw/8CMfEv0gAg9QkE8W8f6wZ+dXai1PJxxHhShKgtP1sMqr5a654PM3+SlcFCEqg8V8aMgR0uXmKLp8AlTaJIePDGrgR5P22+Ce5zpniFFK6Gp6iaNoCrnvDOS6O13VTwMINAqkPXm0/THIvBhIr/FQoiQfNLa6fNkFQBXXRgzSIP1Rxn8H78I07m9r14v8G6XaPqF6L8F39u2+xzh69/is9U4e5sGu1n6o2vXmdhZWshtWHcKNeuPr+IralrHXQz2r8RpQAPQ==</signature>
+</APLicense>
+
+<APLicense>
+    <licenseVersion>1.0</licenseVersion>
+    <licenseID>a05e8412-ff9e-4abb-8a73-0bd7ab6d248c</licenseID>
+    <keyID>26e54ea1e6a5e48f3b83a9ca2531fc62fe8a4d61~f211abdfd4a9ef7f3e3143fe540cff378d8fd116</keyID>
+    <productInfo>dUZjLo+0GqoDMZY6Kytgn1gmCsoswbkzz8X6TaBmoX4=</productInfo>
+    <ltu>1</ltu>
+    <creation>04/12/2023T14:50:21+0000</creation>
+    <activation>04/12/2023T00:00:00+0000</activation>
+    <expiration type="date">03/02/2024T00:00:00+0000</expiration>
+    <capacity uom="Named User">1</capacity>
+    <validity>permanent</validity>
+    <origin>
+        <system>SE</system>
+        <user>saiganesh000123@gmail.com</user>
+        <orderID>TO-121171</orderID>
+        <SAID>SUB+TO-121171</SAID>
+    </origin>
+    <constraints>
+        <lockList>
+            <lock type="ipAddress">*.*.*.*</lock>
+        </lockList>
+    </constraints>
+    <attributeList>
+        <attribute>
+            <name>License Group</name>
+            <valueList>
+                <value>Visual-COBOL-Eclipse-Build-Tools-Docker-Named-User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>License Type</name>
+            <valueList>
+                <value>Named User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Ordered Product</name>
+            <valueList>
+                <value>Visual COBOL for Eclipse Named User Windows WebEval SW E-LTU</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Product Code</name>
+            <valueList>
+                <value>EV-AA133</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Serial Number</name>
+            <valueList>
+                <value>202312051437280</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Environment Type</name>
+            <valueList>
+                <value>PRODUCTION</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>End Customer</name>
+            <valueList>
+                <value>Naga Sai Ganesh_Athukuri_Personal_Account</value>
+            </valueList>
+        </attribute>
+    </attributeList>
+    <description>IMTK-DevelopmentDocker</description>
+    <signature>eHEX/hdztufxxkvBpXLZgwJaAYmdCZn5IEHSGIA8fhRXVdu+4sDc14XjemSU66PEFW9vJBkbd8to8Vn5pzwA61a9IKMZeY5T2qW1z7BGqIW78kEwRNO3s0AHhwl2I/IOruGDfJw9lwyh5bGOgKWHqOLSWFT7nm5Zrt6hpg2nyrlGlyB5/D2MzEUxQqgNpZOH5wMWHapqegIQSSSiIaM4PTOtYPiWVi4pIDfdElRjp0amqcJidp6nxvfbORgba/080mkZM/rBcJWL2g8yksvEX8Xeff8Ht8egTUSMYyGonbr/z1P1yFULdc26aDjsPhMEZMuA5VZ3+/alvDg6a2p91g==</signature>
+</APLicense>
+
+<APLicense>
+    <licenseVersion>1.0</licenseVersion>
+    <licenseID>283d9b5c-28e8-4b9c-9f3c-5c0ee01907ff</licenseID>
+    <keyID>26e54ea1e6a5e48f3b83a9ca2531fc62fe8a4d61~f211abdfd4a9ef7f3e3143fe540cff378d8fd116</keyID>
+    <productInfo>zH5BkQnOie97JvbLN5R2ExYdn6lPkkS1bVwBjtNQ7qk=</productInfo>
+    <ltu>1</ltu>
+    <creation>04/12/2023T14:50:22+0000</creation>
+    <activation>04/12/2023T00:00:00+0000</activation>
+    <expiration type="date">03/02/2024T00:00:00+0000</expiration>
+    <capacity uom="Named User">1</capacity>
+    <validity>permanent</validity>
+    <origin>
+        <system>SE</system>
+        <user>saiganesh000123@gmail.com</user>
+        <orderID>TO-121171</orderID>
+        <SAID>SUB+TO-121171</SAID>
+    </origin>
+    <constraints>
+        <lockList>
+            <lock type="ipAddress">*.*.*.*</lock>
+        </lockList>
+    </constraints>
+    <attributeList>
+        <attribute>
+            <name>License Group</name>
+            <valueList>
+                <value>Visual-COBOL-Eclipse-Build-Tools-Docker-Named-User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>License Type</name>
+            <valueList>
+                <value>Named User</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Ordered Product</name>
+            <valueList>
+                <value>Visual COBOL for Eclipse Named User Windows WebEval SW E-LTU</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Product Code</name>
+            <valueList>
+                <value>EV-AA133</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Serial Number</name>
+            <valueList>
+                <value>202312051437280</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>Environment Type</name>
+            <valueList>
+                <value>PRODUCTION</value>
+            </valueList>
+        </attribute>
+        <attribute>
+            <name>End Customer</name>
+            <valueList>
+                <value>Naga Sai Ganesh_Athukuri_Personal_Account</value>
+            </valueList>
+        </attribute>
+    </attributeList>
+    <description>ManagedCheckerDocker</description>
+    <signature>LT39i2WQlghcgNYmBVVVLhAp/oaqdI4eAetywwSYmcH8+DKVycQay4GPuUj6oU6ccYQkuk4su0gZIauLl73cHYb6sTJddBQMPZPH30/i1J251tgi8eF00O3caQc2dHDVDQdAAyy+TzyPgXkUCwRztl5j/xIc4DfnUhu+OlMid85oBjMOb/LLC+PutCxNNqH7Rz1Du3H2kyEgY7mdjmLGdUmZDe9efoRb7frIkjOl9tMFt9ivelhol3Wvuu/AbTy7Thc50p3TzqmgYJVA4mv5q8mXEFGE7kz7jEI+/wcPVmyT8BcKRm/oEIWPhifp5aJgW3UV7S0u09BIvQk1JXgMFg==</signature>
+</APLicense>
+</LicenseList>
