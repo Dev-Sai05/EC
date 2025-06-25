@@ -1,1 +1,61 @@
-HI
+package com.db;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+public class DBPoolManager {
+    private static HikariDataSource ds;
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:oracle:thin:@localhost:1521:xe");  // Change this
+        config.setUsername("your_user");
+        config.setPassword("your_pass");
+        config.setMaximumPoolSize(10);
+        ds = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return ds.getConnection();
+    }
+}
+
+
+class-id DBAccess.
+
+       method-id Main static.
+       local-storage section.
+       01 conn object reference java.sql.Connection.
+       01 stmt object reference java.sql.Statement.
+       01 rs object reference java.sql.ResultSet.
+       01 hasNext type boolean.
+       01 result type string.
+       procedure division.
+
+           display "Getting connection from Java pool..."
+           invoke com.db.DBPoolManager "getConnection" returning conn
+
+           if conn not = null
+               display "Connection successful!"
+
+               invoke conn "createStatement" returning stmt
+               invoke stmt "executeQuery" using "SELECT SYSDATE FROM DUAL" returning rs
+               invoke rs "next" returning hasNext
+
+               if hasNext
+                   invoke rs "getString" using 1 returning result
+                   display "DB Time: " result
+               end-if
+
+               invoke rs "close"
+               invoke stmt "close"
+               invoke conn "close"
+           else
+               display "Connection failed!"
+           end-if
+
+           goback.
+       end method.
+       end class.
