@@ -59,3 +59,46 @@ class-id DBAccess.
            goback.
        end method.
        end class.
+
+
+
+class-id com.db.DBAccess.
+
+       method-id Main static.
+       local-storage section.
+       01 conn object reference java.sql.Connection.
+       01 stmt object reference java.sql.Statement.
+       01 rs   object reference java.sql.ResultSet.
+       01 hasNext type boolean.
+       01 result type string.
+       01 dbUrl    type string value "jdbc:oracle:thin:@localhost:1521:xe".
+       01 dbUser   type string value "your_user".
+       01 dbPass   type string value "your_password".
+
+       procedure division.
+
+           invoke java.lang.Class "forName" using "oracle.jdbc.OracleDriver"
+
+           invoke java.sql.DriverManager "getConnection"
+               using dbUrl dbUser dbPass
+               returning conn
+
+           if conn not = null
+               display "Connection successful!"
+               invoke conn "createStatement" returning stmt
+               invoke stmt "executeQuery" using "SELECT SYSDATE FROM DUAL" returning rs
+               invoke rs "next" returning hasNext
+               if hasNext
+                   invoke rs "getString" using 1 returning result
+                   display "DB Time: " result
+               end-if
+               invoke rs "close"
+               invoke stmt "close"
+               invoke conn "close"
+           else
+               display "Connection failed!"
+           end-if
+
+           goback.
+       end method.
+       end class.
