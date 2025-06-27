@@ -209,3 +209,48 @@ class-id DBAccess.
        end method Main.
 
        end class DBAccess.
+
+___
+
+program-id. DBACCESS.
+       environment division.
+       configuration section.
+       repository.
+           class java.sql.Connection
+           class java.sql.Statement
+           class java.sql.ResultSet
+           class db.DBPoolManager.
+
+       data division.
+       working-storage section.
+       01 conn object reference java.sql.Connection.
+       01 stmt object reference java.sql.Statement.
+       01 rs   object reference java.sql.ResultSet.
+       01 sql  pic x(100) value "SELECT id, name FROM sample_table".
+
+       procedure division.
+
+           *> Get connection from DBPoolManager (Java)
+           invokestatic db.DBPoolManager "getConnection"
+               returning conn
+
+           if conn not = null
+               display "Connection Successful from COBOL"
+
+               invoke conn "createStatement" returning stmt
+               invoke stmt "executeQuery" using sql returning rs
+
+               perform until rs::"next" = false
+                   display "ID: " rs::"getInt"(1)
+                   display "Name: " rs::"getString"(2)
+               end-perform
+
+               invoke rs "close"
+               invoke stmt "close"
+               invoke conn "close"
+           else
+               display "Failed to get connection"
+           end-if
+
+           goback.
+       end program DBACCESS.
