@@ -143,3 +143,69 @@ class-id com.db.DBAccess.
        end method.
 
        end class.
+
+
+--------
+
+
+package db;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+public class DBPoolManager {
+    private static HikariDataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/testdb"); // or Oracle JDBC URL
+        config.setUsername("your_username");
+        config.setPassword("your_password");
+        config.setMaximumPoolSize(10);
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver"); // or oracle.jdbc.OracleDriver
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+}
+
+
+class-id DBAccess.
+
+       method-id Main static.
+       local-storage section.
+       01 conn object reference java.sql.Connection.
+       01 stmt object reference java.sql.Statement.
+       01 rs   object reference java.sql.ResultSet.
+       01 sql  string.
+       
+       procedure division.
+           invoke db.DBPoolManager "getConnection" returning conn
+           
+           if conn not = null
+               display "Connected to DB from COBOL"
+               set sql to "SELECT id, name FROM sample_table"
+               invoke conn "createStatement" returning stmt
+               invoke stmt "executeQuery" using sql returning rs
+
+               perform until rs::"next" = false
+                   display "ID: " rs::"getInt"(1)
+                   display "Name: " rs::"getString"(2)
+               end-perform
+
+               invoke rs "close"
+               invoke stmt "close"
+               invoke conn "close"
+           else
+               display "Failed to get connection"
+           end-if
+           goback.
+       end method Main.
+
+       end class DBAccess.
