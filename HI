@@ -1,6 +1,17 @@
 https://docs.rocketsoftware.com/bundle/visualcobol_dg_100_html/page/GUID-07B61668-D77F-4C63-ABBC-15ED4ACE3E07.html
 
 
+https://docs.rocketsoftware.com/bundle/visualcobol_dg2_100_html/page/GUID-CFC126BE-7402-4851-A0AE-1F33FC7A5681.html
+ 
+https://docs.rocketsoftware.com/bundle/visualcobol_dg2_100_html/page/GUID-9720A165-00D4-4141-AA09-6ABF4803BA13.html
+ 
+https://docs.rocketsoftware.com/bundle/visualcobol_dg2_100_html/page/GUID-3C495CA9-2B7A-4890-AC64-005545AED543.html
+ 
+https://docs.rocketsoftware.com/bundle/visualcobol_dg2_100_html/page/GUID-F9751434-1614-4271-A1CD-2078CEC56D5E.html
+
+https://docs.rocketsoftware.com/bundle/visualcobol_dg2_100_html/page/GUID-DE95786C-5792-45DF-9809-569536DDDE3B.html
+
+
 package com.db;
 
 import java.sql.Connection;
