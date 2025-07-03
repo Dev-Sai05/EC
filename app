@@ -75,3 +75,34 @@ procedure division.
     goback.
 
 end class.
+
+
+class-id. ReadFile.
+
+repository.
+    class java.io.FileReader.
+    class java.io.BufferedReader.
+
+working-storage section.
+01 fileReader       object reference.
+01 bufferedReader   object reference.
+01 line             string.
+
+procedure division.
+
+    *> Open file for reading
+    set fileReader to new java.io.FileReader("C:/Users/V1010513/Desktop/Properties/PFEnquiry/VisualCobAPI/MetaData/PropertyFiles/application.properties")
+    set bufferedReader to new java.io.BufferedReader(fileReader)
+
+    perform until line = null
+        set line to bufferedReader::readLine()
+        if line not = null
+            display line
+        end-if
+    end-perform
+
+    invoke bufferedReader "close"
+
+    goback.
+
+end class.
