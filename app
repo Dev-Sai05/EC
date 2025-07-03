@@ -31,4 +31,47 @@ procedure division.
 
 end class.
 
-Hi
+-----
+
+
+class-id. ReadProps.
+
+working-storage section.
+
+01 props        object reference.
+01 fileStream   object reference.
+
+01 jdbc-url     pic x(200).
+01 username     pic x(50).
+01 password     pic x(50).
+
+procedure division.
+
+    *> Create input stream for the full file path
+    set fileStream to new java.io.FileInputStream("C:/Users/V1010513/Desktop/Properties/PFEnquiry/VisualCobAPI/MetaData/PropertyFiles/application.properties")
+
+    *> Create a Properties object
+    set props to new java.util.Properties
+
+    *> Load the properties from the file
+    invoke props "load" using fileStream
+
+    *> Now access day DB properties
+    set jdbc-url  to props::getProperty("day.datasource.jdbc-url")
+    set username  to props::getProperty("day.datasource.username")
+    set password  to props::getProperty("day.datasource.password")
+
+    display "DAY DB JDBC URL   : " jdbc-url
+    display "DAY DB Username   : " username
+    display "DAY DB Password   : " password
+
+    *> You can also access night DB properties
+    set username  to props::getProperty("night.datasource.username")
+    set password  to props::getProperty("night.datasource.password")
+
+    display "NIGHT DB Username : " username
+    display "NIGHT DB Password : " password
+
+    goback.
+
+end class.
