@@ -1,0 +1,307 @@
+package com.tcs.bancs.microservices.configuration;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Properties;
+
+import javax.sql.rowset.serial.SerialException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.tcs.bancs.microservices.config.CacheConfig;
+import com.tcs.bancs.microservices.db.model.Dtl_file_stat;
+import com.tcs.bancs.microservices.exception.RrnException;
+import com.tcs.bancs.microservices.exception.SrcException;
+import com.tcs.bancs.microservices.impl.DtlFileDetailsRepositoryImpl;
+import com.tcs.bancs.microservices.repository.day.DtlFileStatDetailDayRepo;
+import com.tcs.bancs.microservices.utils.tcs.FrameworkConstants;
+
+
+@Component
+public class Scheduler {
+	private final DtlFileStatDetailDayRepo dtlRepo;
+	
+	String FailureDescription = CacheConfig.frameworkConfigProperties.getProperty(FrameworkConstants.LOOKUP_FILES_PATH);
+	Properties failuredesc = PropertyLoader.readPropertyFile(new String(FailureDescription + "/FailureDescription.properties"));
+	
+	 static Logger logger = LoggerFactory.getLogger(Scheduler.class);
+	@Autowired
+	DtlFileDetailsRepositoryImpl dtlLog;
+	
+	
+	
+	public Scheduler(DtlFileStatDetailDayRepo dtlRepo) {
+		this.dtlRepo = dtlRepo;
+	}
+
+	  @Value("${sftp.host}")
+	    private String sftpHost;
+
+	    @Value("${sftp.port}")
+	    private int sftpPort;
+
+	    @Value("${sftp.user}")
+	    private String sftpUser;
+
+	    @Value("${sftp.password}")
+	    private String sftpPassword;
+
+	    @Value("${sftp.directory}")
+	    private String sftpDirectory;
+	    
+	    @Value("${nfs.temppath}")
+	    private String nfstemppath;
+	    
+	    @Value("${nfs.backuppath}")
+	    private String nfsbackuppath;
+	    
+	@Scheduled(fixedDelay = 60000)
+	public void cronJon() throws  IOException, SerialException, SQLException, RrnException, SrcException,Exception {
+	//JSchException, IOException, SerialException, SQLException, RrnException, SrcException
+		boolean retry = false;
+		LocalDateTime time = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
+		String entryDate = formatter.format(time);
+		logger.error("entryDate", entryDate);
+		LocalDateTime entryDate1 = LocalDateTime.parse(entryDate, formatter);
+		logger.error("entryDate1", entryDate1);
+		
+		  // Subtract 10 minutes
+        LocalDateTime updatedDateTime = entryDate1.minus(10, ChronoUnit.MINUTES);
+        logger.error("updatedDateTime", updatedDateTime);
+		
+		//SFTP start for channel SFG
+    //	String sourceDir = "/home/MICROSFTP/LL/Temp/";
+    //	String DestDir = "/home/MICROSFTP/LL/Backup/";
+    	logger.error("sourceDir", nfstemppath);
+    	logger.error("DestDir", nfsbackuppath);
+    	  for (int attempt = 1; attempt <= 3; attempt++) {
+              logger.info("Attempt: {}", attempt);
+		 Session session = null;
+		
+	        ChannelSftp channelSftp = null;
+	        try {
+	            // Establish SFTP connection
+	            JSch jsch = new JSch();
+	            session = jsch.getSession(sftpUser, sftpHost, sftpPort);
+	            logger.error("sftpUser", session);
+	            session.setPassword(sftpPassword);
+	            session.setConfig("StrictHostKeyChecking", "no");
+	            session.connect();
+
+	            channelSftp = (ChannelSftp) session.openChannel("sftp");
+	            channelSftp.connect();
+	        
+	       // logger.error(">>>SFG Connection Retry 3>>", e);
+	    		String targetDir = sftpDirectory;
+	    		List<Dtl_file_stat> obj = dtlRepo.findByDtl_file_statDetails("CRTS" ,"CRTE");
+	    		logger.info("Key 1 : " + obj.size());
+	    		for (int i=0;i< obj.size();i++) {
+	    			String recdTime = obj.get(i).getRecd_time();
+	    			LocalDateTime recdTime1 = LocalDateTime.parse(recdTime, formatter);
+	    		
+	    				 if (recdTime1.isAfter(updatedDateTime) && recdTime1.isBefore(entryDate1)) {
+	    					 logger.info("recdTime1>"+recdTime1);
+	    						//for (Dtl_file_stat fileStatus1 : obj) {
+	    						String File_reference_number1 = obj.get(i).getFile_reference_number();
+	    						
+	    						Path sourcePath = Paths.get(nfstemppath, File_reference_number1);
+	    						Path targetPath = Paths.get(targetDir, File_reference_number1);
+	    						Path DestPath = Paths.get(nfsbackuppath, File_reference_number1);
+	    					
+	    							// Check if the source file exists
+	    							if (Files.exists(sourcePath)) {
+	    								// Ensure the target directory exists
+	    								Files.createDirectories(targetPath.getParent());
+	    								// Copy the file to the target directory
+	    								logger.info("targetPath>>>>>>>>>>>>>"+targetPath);
+	    							//	Files.copy(sourcePath, targetPath);
+	    								logger.info("sftpDirectory>>>"+sftpDirectory);
+	    								
+	    								channelSftp.put(nfstemppath+File_reference_number1, sftpDirectory);
+	    								logger.info("File copied successfully to sfg" + sftpDirectory);
+	    								Files.copy(sourcePath, DestPath, StandardCopyOption.REPLACE_EXISTING);
+	    								logger.info("File copied successfully to BackUp" + sftpDirectory);
+	    							
+	    							}
+	    						
+	    							dtlLog.DtlLogData(obj.get(i).getDtl_file_statpk().getSrc_id(), obj.get(i).getDtl_file_statpk().getRequest_ref_num(),
+	    									obj.get(i).getFile_reference_number(),obj.get(i).getDtl_file_statpk().getCustomer_number() ,
+	    									obj.get(i).getFile_name(),"TRNS", formatter.format(time),
+	    									failuredesc.getProperty("TRNS"));
+	    							
+	    					
+	    				 }
+	    				
+	        }
+	        }catch (JSchException  e) {
+				//e.printStackTrace();
+		     	   List<Dtl_file_stat> files = dtlRepo.findByDtl_file_statDetails("CRTS", "CRTE");
+		           for (int j=0;j< files.size();j++) {
+		    	if (attempt == 1){
+					logger.info("Attempt {}/2 to TRANSFER>>>>>>>>>>>", attempt);
+					List<Dtl_file_stat> dtl_file_stat = dtlRepo.findByDtl_file_stat2Details(files.get(j).getDtl_file_statpk().getSrc_id(),files.get(j).getDtl_file_statpk().getRequest_ref_num(),
+							files.get(j).getDtl_file_statpk().getCustomer_number());
+							if (!dtl_file_stat.isEmpty()) {
+								String FileStatus = dtl_file_stat.get(0).getDtl_file_statpk().getFile_status();
+								FileStatus = (FileStatus.equals("CRTS") ||FileStatus.equals("CRTE") ) ? "TRNF1":"";
+								dtlLog.DtlLogData(dtl_file_stat.get(0).getDtl_file_statpk().getSrc_id(), dtl_file_stat.get(0).getDtl_file_statpk().getRequest_ref_num(),
+										dtl_file_stat.get(0).getFile_reference_number(),files.get(j).getDtl_file_statpk().getCustomer_number(),
+										dtl_file_stat.get(0).getFile_name(), FileStatus, formatter.format(time),
+										failuredesc.getProperty(FileStatus));
+							}
+					retry = true;
+				} else if (attempt == 2){
+					logger.info("Attempt {}/2 to TRANSFER>>>>>>>>>>>", attempt);
+					List<Dtl_file_stat> dtl_file_stat = dtlRepo.findByDtl_file_stat2Details(files.get(j).getDtl_file_statpk().getSrc_id(),files.get(j).getDtl_file_statpk().getRequest_ref_num(),
+							files.get(j).getDtl_file_statpk().getCustomer_number());
+							if (!dtl_file_stat.isEmpty()) {
+								String FileStatus = dtl_file_stat.get(0).getDtl_file_statpk().getFile_status();
+								FileStatus = (FileStatus.equals("TRNF1")) ? "TRNF2":"";
+								dtlLog.DtlLogData(dtl_file_stat.get(0).getDtl_file_statpk().getSrc_id(), dtl_file_stat.get(0).getDtl_file_statpk().getRequest_ref_num(),
+										dtl_file_stat.get(0).getFile_reference_number(), files.get(j).getDtl_file_statpk().getCustomer_number(),
+										dtl_file_stat.get(0).getFile_name(), FileStatus, formatter.format(time),
+										failuredesc.getProperty(FileStatus));
+							}
+					retry = true;
+				} else {
+					logger.error("TRANSFER failed on all attempts>>>>>>>>>>>>>", e);
+					List<Dtl_file_stat> dtl_file_stat = dtlRepo.findByDtl_file_stat2Details(files.get(j).getDtl_file_statpk().getSrc_id(),files.get(j).getDtl_file_statpk().getRequest_ref_num(),
+							files.get(j).getDtl_file_statpk().getCustomer_number());
+							if (!dtl_file_stat.isEmpty()) {
+								String FileStatus = dtl_file_stat.get(0).getDtl_file_statpk().getFile_status();
+								FileStatus = (FileStatus.equals("TRNF2")) ? "TRNF3":"";
+								dtlLog.DtlLogData(dtl_file_stat.get(0).getDtl_file_statpk().getSrc_id(), dtl_file_stat.get(0).getDtl_file_statpk().getRequest_ref_num(),
+										dtl_file_stat.get(0).getFile_reference_number(), files.get(j).getDtl_file_statpk().getCustomer_number(),
+										dtl_file_stat.get(0).getFile_name(), FileStatus, formatter.format(time),
+										failuredesc.getProperty(FileStatus));
+							}
+					// e.printStackTrace();
+				}
+		           }
+        
+			}catch(Exception e) {
+				//e.printStackTrace();
+		     	   List<Dtl_file_stat> files = dtlRepo.findByDtl_file_statDetails("CRTS", "CRTE");
+		           for (int j=0;j< files.size();j++) {
+		    	if (attempt == 1){
+					logger.info("Attempt {}/2 to TRANSFER>", attempt);
+					List<Dtl_file_stat> dtl_file_stat = dtlRepo.findByDtl_file_stat2Details(files.get(j).getDtl_file_statpk().getSrc_id(),files.get(j).getDtl_file_statpk().getRequest_ref_num(),
+							files.get(j).getDtl_file_statpk().getCustomer_number());
+							if (!dtl_file_stat.isEmpty()) {
+								String FileStatus = dtl_file_stat.get(0).getDtl_file_statpk().getFile_status();
+								FileStatus = (FileStatus.equals("CRTS") ||FileStatus.equals("CRTE") ) ? "TRNF1":"";
+								dtlLog.DtlLogData(dtl_file_stat.get(0).getDtl_file_statpk().getSrc_id(), dtl_file_stat.get(0).getDtl_file_statpk().getRequest_ref_num(),
+										dtl_file_stat.get(0).getFile_reference_number(),files.get(j).getDtl_file_statpk().getCustomer_number(),
+										dtl_file_stat.get(0).getFile_name(), FileStatus, formatter.format(time),
+										failuredesc.getProperty(FileStatus));
+							}
+					retry = true;
+				} else if (attempt == 2){
+					logger.info("Attempt {}/2 to TRANSFER>", attempt);
+					List<Dtl_file_stat> dtl_file_stat = dtlRepo.findByDtl_file_stat2Details(files.get(j).getDtl_file_statpk().getSrc_id(),files.get(j).getDtl_file_statpk().getRequest_ref_num(),
+							files.get(j).getDtl_file_statpk().getCustomer_number());
+							if (!dtl_file_stat.isEmpty()) {
+								String FileStatus = dtl_file_stat.get(0).getDtl_file_statpk().getFile_status();
+								FileStatus = (FileStatus.equals("TRNF1")) ? "TRNF2":"";
+								dtlLog.DtlLogData(dtl_file_stat.get(0).getDtl_file_statpk().getSrc_id(), dtl_file_stat.get(0).getDtl_file_statpk().getRequest_ref_num(),
+										dtl_file_stat.get(0).getFile_reference_number(), files.get(j).getDtl_file_statpk().getCustomer_number(),
+										dtl_file_stat.get(0).getFile_name(), FileStatus, formatter.format(time),
+										failuredesc.getProperty(FileStatus));
+							}
+					retry = true;
+				} else {
+					logger.error("TRANSFER failed on all attempts>", e);
+					List<Dtl_file_stat> dtl_file_stat = dtlRepo.findByDtl_file_stat2Details(files.get(j).getDtl_file_statpk().getSrc_id(),files.get(j).getDtl_file_statpk().getRequest_ref_num(),
+							files.get(j).getDtl_file_statpk().getCustomer_number());
+							if (!dtl_file_stat.isEmpty()) {
+								String FileStatus = dtl_file_stat.get(0).getDtl_file_statpk().getFile_status();
+								FileStatus = (FileStatus.equals("TRNF2")) ? "TRNF3":"";
+								dtlLog.DtlLogData(dtl_file_stat.get(0).getDtl_file_statpk().getSrc_id(), dtl_file_stat.get(0).getDtl_file_statpk().getRequest_ref_num(),
+										dtl_file_stat.get(0).getFile_reference_number(), files.get(j).getDtl_file_statpk().getCustomer_number(),
+										dtl_file_stat.get(0).getFile_name(), FileStatus, formatter.format(time),
+										failuredesc.getProperty(FileStatus));
+							}
+					// e.printStackTrace();
+				}
+		           }
+           
+			} 
+	        logger.info("Schedular working end ");
+	        
+  		  logger.info(" retry"+retry);
+	 	        if (!retry) {
+	 	        	logger.info("Retrying>>>");
+	 				break; // Exit if retry is not needed
+
+	 			}
+    	  }
+    	  	     
+    	//file Deleting from Temp 
+    	  List<Dtl_file_stat> files = dtlRepo.findByDtl_file_statDetails("CRTS", "CRTE");
+          for (int t=0;t< files.size();t++) {
+			List<Dtl_file_stat> objbackup = dtlRepo.findByDtl_file_stat2Details(files.get(t).getDtl_file_statpk().getSrc_id(),files.get(t).getDtl_file_statpk().getRequest_ref_num(),
+					files.get(t).getDtl_file_statpk().getCustomer_number());
+			 for (int b=0;b< objbackup.size();b++) {
+			if(objbackup.get(b).getDtl_file_statpk().getFile_status().equals("TRNS")) {
+			
+	                    File tempFolder = new File(nfstemppath);
+	                    File[] files1 = tempFolder.listFiles();
+	                     
+	                    if (files1 != null) {
+	                        for (File file : files1) {
+	                            if (file.isFile()) {
+	                                boolean deleted = file.delete();
+	                                if (deleted) {
+	                                    logger.info("Deleted from Temp Successfully: " + file.getName());
+	                                } else {
+	                                    logger.info("Failed to delete from Temp: " + file.getName());
+	                                }
+	                            }
+	                        }
+	                    }
+	                
+			}
+			 }
+          }
+    	  
+        //file Deleting from BackUp 
+          File folder = new File(nfsbackuppath);
+	        if (folder.exists() && folder.isDirectory()) {
+	            File[] files11 = folder.listFiles();
+	            long currentTime = System.currentTimeMillis();
+	            long threshold = currentTime - (5 * 60 * 1000L); // Calculate the threshold time
+
+	            for (File file : files11) {
+	                if (file.isFile() && file.lastModified() < threshold) {
+	                    if (file.delete()) {
+	                        logger.info("Deleted from backup " + file.getName());
+	                    } else {
+	                        logger.info("Failed to delete from backup: " + file.getName());
+	                    }
+	                }
+	            }
+	        } else {
+	            logger.info("The specified directory does not exist or is not a directory.");
+	        }
+		 	     
+	 	        }  	
+	}
