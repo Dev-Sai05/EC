@@ -1,0 +1,15 @@
+-------------------------------BUILD STARTED-------------------------------
+    [cobol] COBCPY=E:\Personl Testing Services\Customer_Creation\Customer_Creation;E:\Personl Testing Services\Customer_Creation\Customer_Creation\src;E:\Personl Testing Services\Customer_Creation\Customer_Creation_Copybook;E:\Personl Testing Services\Customer_Creation\Customer_Creation;E:\Personl Testing Services\Customer_Creation\Customer_Creation\src;E:\Personl Testing Services\Customer_Creation\Customer_Creation_Copybook;C:\Users\Public\Micro Focus\Visual COBOL\eclipse\%COBCPY%;C:\Program Files (x86)\Micro Focus\Visual COBOL\cpylib;C:\Program Files (x86)\Micro Focus\Visual COBOL\cpylib\basecl;
+    [cobol] Compiling (64-bit) CI0051.COB from project 'Customer_Creation'...
+    [cobol] Micro Focus COBOL 
+    [cobol] Version 10.0 (C) Copyright 1984-2024 Micro Focus or one of its affiliates.
+    [cobol] **    COBCH2362S Perform range starting from section 'MFECM-START-PDIV' cannot be split to conform with JVM method size restraints  : "E:\Personl Testing Services\Customer_Creation\Customer_Creation\src\com\tcs\customercreation\CI0051.COB"(0),"E:\Personl Testing Services\Customer_Creation\Customer_Creation\src\com\tcs\customercreation\CI0051.COB"(1,7,7)
+    [cobol] * Checking complete - errors found
+    [cobol] Compilation complete with 1 errors, 0 warnings, 0 notices and an exit code of 12
+
+
+BUILD FAILED
+Build finished with 1 errors, 0 warnings, 0 notices and a maximum exit code of 12
+
+Total time: 4 seconds
+-------------------------------BUILD FINISHED------------------------------
