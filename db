@@ -68,3 +68,30 @@ IDENTIFICATION DIVISION.
                    MOVE PROPERTY-VALUE TO DB-PASS
                END-IF
            END-IF.
+
+
+
+
+01  java-system-class    object reference class "java.lang.System".
+       01  env-var-name         string.
+       01  env-var-value        string.
+
+       ...
+
+       *> Extract "DB_URL" from ${DB_URL}
+       MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
+       INSPECT PROPERTY-VALUE REPLACING LEADING "${" BY SPACES
+       INSPECT PROPERTY-VALUE REPLACING TRAILING "}" BY SPACES
+
+       STRING PROPERTY-VALUE DELIMITED BY SIZE INTO env-var-name
+
+       *> Use System.getenv("DB_URL")
+       INVOKE java-system-class "getenv" USING env-var-name RETURNING env-var-value
+
+       IF PROPERTY-NAME = "db.url"
+           MOVE FUNCTION JAVA-STRING-TO-NATIVE(env-var-value) TO DB-URL
+       ELSE IF PROPERTY-NAME = "db.user"
+           MOVE FUNCTION JAVA-STRING-TO-NATIVE(env-var-value) TO DB-USER
+       ELSE IF PROPERTY-NAME = "db.pass"
+           MOVE FUNCTION JAVA-STRING-TO-NATIVE(env-var-value) TO DB-PASS
+       END-IF
