@@ -1,0 +1,70 @@
+IDENTIFICATION DIVISION.
+       PROGRAM-ID. ReadProps.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01  FILE-LINE                 PIC X(200).
+       01  LINE-IDX                  PIC 9(4) COMP-5 VALUE 1.
+
+       01  PROPERTY-NAME             PIC X(50).
+       01  PROPERTY-VALUE            PIC X(150).
+
+       01  DB-URL                    PIC X(100).
+       01  DB-USER                   PIC X(50).
+       01  DB-PASS                   PIC X(50).
+
+       01  ENV-VALUE                 PIC X(150).
+       01  FILE-PATH                 PIC X(100) VALUE "/app/meta/application.properties".
+
+       PROCEDURE DIVISION.
+       MAIN-LOGIC.
+           OPEN INPUT APPLICATION-FILE
+           PERFORM UNTIL EOF
+               READ APPLICATION-FILE
+                   AT END
+                       MOVE 'Y' TO EOF-FLAG
+                   NOT AT END
+                       MOVE FUNCTION TRIM(FILE-LINE) TO FILE-LINE
+                       IF FILE-LINE NOT = SPACES
+                          PERFORM PARSE-AND-RESOLVE
+                       END-IF
+               END-READ
+           END-PERFORM
+           CLOSE APPLICATION-FILE
+           DISPLAY "DB URL  : " DB-URL
+           DISPLAY "DB USER : " DB-USER
+           DISPLAY "DB PASS : " DB-PASS
+           STOP RUN.
+
+       PARSE-AND-RESOLVE.
+           UNSTRING FILE-LINE DELIMITED BY "="
+               INTO PROPERTY-NAME PROPERTY-VALUE
+           END-UNSTRING
+           IF PROPERTY-VALUE(1:2) = "${"
+               MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
+               INSPECT PROPERTY-VALUE REPLACING LEADING "${" BY SPACES
+               INSPECT PROPERTY-VALUE REPLACING TRAILING "}" BY SPACES
+               CALL 'java.lang.System' USING BY CONTENT "getenv"
+                     BY CONTENT PROPERTY-VALUE
+                     RETURNING ENV-VALUE
+               END-CALL
+               IF PROPERTY-NAME = "db.url"
+                   MOVE ENV-VALUE TO DB-URL
+               ELSE IF PROPERTY-NAME = "db.user"
+                   MOVE ENV-VALUE TO DB-USER
+               ELSE IF PROPERTY-NAME = "db.pass"
+                   MOVE ENV-VALUE TO DB-PASS
+               END-IF
+           ELSE
+               IF PROPERTY-NAME = "db.url"
+                   MOVE PROPERTY-VALUE TO DB-URL
+               ELSE IF PROPERTY-NAME = "db.user"
+                   MOVE PROPERTY-VALUE TO DB-USER
+               ELSE IF PROPERTY-NAME = "db.pass"
+                   MOVE PROPERTY-VALUE TO DB-PASS
+               END-IF
+           END-IF.
