@@ -1,170 +1,86 @@
 IDENTIFICATION DIVISION.
-       PROGRAM-ID. ReadProps.
-
-       ENVIRONMENT DIVISION.
-       CONFIGURATION SECTION.
+       PROGRAM-ID. ReadEnvPropsSimple.
 
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-       01  FILE-LINE                 PIC X(200).
-       01  LINE-IDX                  PIC 9(4) COMP-5 VALUE 1.
+       01  IN-FILE              PIC X(256) VALUE "C:\Users\V1010513\Documents\Configs\application.properties".
+       01  FILE-IN              FILE STATUS IS WS-STATUS.
 
-       01  PROPERTY-NAME             PIC X(50).
-       01  PROPERTY-VALUE            PIC X(150).
+       01  WS-STATUS            PIC XX.
+       01  LINE                PIC X(300).
+       01  PROPERTY-NAME       PIC X(100).
+       01  PROPERTY-VALUE      PIC X(200).
 
-       01  DB-URL                    PIC X(100).
-       01  DB-USER                   PIC X(50).
-       01  DB-PASS                   PIC X(50).
+       01  ENV-NAME            PIC X(100).
+       01  ENV-VALUE           PIC X(200).
+       01  ENV-VALUE-LEN       PIC S9(4) COMP-5 VALUE 200.
+       01  ENV-STATUS          PIC S9(4) COMP-5.
 
-       01  ENV-VALUE                 PIC X(150).
-       01  FILE-PATH                 PIC X(100) VALUE "/app/meta/application.properties".
+       01  DB-URL              PIC X(200).
+       01  DB-USER             PIC X(100).
+       01  DB-PASS             PIC X(100).
+
+       FILE-CONTROL.
+           SELECT FILE-IN ASSIGN TO IN-FILE
+               ORGANIZATION IS LINE SEQUENTIAL.
+
+       FILE SECTION.
+       FD  FILE-IN.
+       01  FILE-LINE           PIC X(300).
 
        PROCEDURE DIVISION.
+
        MAIN-LOGIC.
-           OPEN INPUT APPLICATION-FILE
-           PERFORM UNTIL EOF
-               READ APPLICATION-FILE
+           OPEN INPUT FILE-IN
+
+           PERFORM UNTIL WS-STATUS NOT = "00"
+               READ FILE-IN INTO LINE
                    AT END
-                       MOVE 'Y' TO EOF-FLAG
-                   NOT AT END
-                       MOVE FUNCTION TRIM(FILE-LINE) TO FILE-LINE
-                       IF FILE-LINE NOT = SPACES
-                          PERFORM PARSE-AND-RESOLVE
-                       END-IF
+                       MOVE "99" TO WS-STATUS
+               NOT AT END
+                   MOVE "00" TO WS-STATUS
+                   PERFORM PARSE-AND-RESOLVE
                END-READ
            END-PERFORM
-           CLOSE APPLICATION-FILE
+
+           CLOSE FILE-IN
+
+           DISPLAY "========================="
            DISPLAY "DB URL  : " DB-URL
            DISPLAY "DB USER : " DB-USER
            DISPLAY "DB PASS : " DB-PASS
+           DISPLAY "========================="
+
            STOP RUN.
 
        PARSE-AND-RESOLVE.
-           UNSTRING FILE-LINE DELIMITED BY "="
+           UNSTRING LINE DELIMITED BY "="
                INTO PROPERTY-NAME PROPERTY-VALUE
            END-UNSTRING
+
+           *> Remove spaces and trim
+           INSPECT PROPERTY-NAME REPLACING LEADING SPACES BY ""
+           INSPECT PROPERTY-VALUE REPLACING LEADING SPACES BY ""
+
+           *> Check if value starts with ${
            IF PROPERTY-VALUE(1:2) = "${"
-               MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
-               INSPECT PROPERTY-VALUE REPLACING LEADING "${" BY SPACES
-               INSPECT PROPERTY-VALUE REPLACING TRAILING "}" BY SPACES
-               CALL 'java.lang.System' USING BY CONTENT "getenv"
-                     BY CONTENT PROPERTY-VALUE
-                     RETURNING ENV-VALUE
-               END-CALL
+               MOVE SPACES TO ENV-NAME
+               UNSTRING PROPERTY-VALUE DELIMITED BY "}" INTO ENV-NAME
+               INSPECT ENV-NAME REPLACING LEADING "${" BY ""
+
+               CALL "CBL_GETENV"
+                   USING ENV-NAME
+                         ENV-VALUE
+                         ENV-VALUE-LEN
+                   GIVING ENV-STATUS
+
                IF PROPERTY-NAME = "db.url"
                    MOVE ENV-VALUE TO DB-URL
                ELSE IF PROPERTY-NAME = "db.user"
                    MOVE ENV-VALUE TO DB-USER
                ELSE IF PROPERTY-NAME = "db.pass"
                    MOVE ENV-VALUE TO DB-PASS
-               END-IF
-           ELSE
-               IF PROPERTY-NAME = "db.url"
-                   MOVE PROPERTY-VALUE TO DB-URL
-               ELSE IF PROPERTY-NAME = "db.user"
-                   MOVE PROPERTY-VALUE TO DB-USER
-               ELSE IF PROPERTY-NAME = "db.pass"
-                   MOVE PROPERTY-VALUE TO DB-PASS
-               END-IF
-           END-IF.
-
-
-
-
-
-  IDENTIFICATION DIVISION.
-       PROGRAM-ID. ReadEnvProps.
-
-       ENVIRONMENT DIVISION.
-       CONFIGURATION SECTION.
-
-       DATA DIVISION.
-       WORKING-STORAGE SECTION.
-
-       01  FILE-READER             OBJECT REFERENCE CLASS "java.io.BufferedReader".
-       01  FILE-READER-RDR         OBJECT REFERENCE CLASS "java.io.FileReader".
-       01  LINE-STR                OBJECT REFERENCE CLASS "java.lang.String".
-       01  ENV-VAL                 OBJECT REFERENCE CLASS "java.lang.String".
-       01  ENV-NAME                OBJECT REFERENCE CLASS "java.lang.String".
-       01  SYSTEM-CLASS            OBJECT REFERENCE CLASS "java.lang.System".
-
-       01  COBOL-LINE              PIC X(300).
-       01  PROPERTY-NAME           PIC X(100).
-       01  PROPERTY-VALUE          PIC X(200).
-
-       01  DB-URL                  PIC X(200).
-       01  DB-USER                 PIC X(100).
-       01  DB-PASS                 PIC X(100).
-
-       01  FILE-PATH               PIC X(100) VALUE "app/meta/application.properties".
-
-       PROCEDURE DIVISION.
-
-       MAIN-LOGIC.
-           *> Open file reader
-           INVOKE CLASS "java.io.FileReader"
-               USING FILE-PATH
-               RETURNING FILE-READER-RDR
-
-           *> Wrap in buffered reader
-           INVOKE CLASS "java.io.BufferedReader"
-               USING FILE-READER-RDR
-               RETURNING FILE-READER
-
-           PERFORM UNTIL FILE-READER = NULL
-               INVOKE FILE-READER "readLine"
-                   RETURNING LINE-STR
-
-               IF LINE-STR = NULL
-                   EXIT PERFORM
-               END-IF
-
-               MOVE FUNCTION JAVA-STRING-TO-NATIVE(LINE-STR) TO COBOL-LINE
-
-               IF COBOL-LINE(1:1) = "#" OR COBOL-LINE = SPACES
-                   CONTINUE
-               ELSE
-                   PERFORM PARSE-AND-RESOLVE
-               END-IF
-           END-PERFORM
-
-           INVOKE FILE-READER "close"
-
-           DISPLAY "======================"
-           DISPLAY "DB URL  : " DB-URL
-           DISPLAY "DB USER : " DB-USER
-           DISPLAY "DB PASS : " DB-PASS
-           DISPLAY "======================"
-
-           STOP RUN.
-
-       PARSE-AND-RESOLVE.
-           UNSTRING COBOL-LINE DELIMITED BY "="
-               INTO PROPERTY-NAME PROPERTY-VALUE
-           END-UNSTRING
-
-           *> Trim whitespace
-           MOVE FUNCTION TRIM(PROPERTY-NAME) TO PROPERTY-NAME
-           MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
-
-           IF PROPERTY-VALUE(1:2) = "${"
-               INSPECT PROPERTY-VALUE REPLACING LEADING "${" BY SPACES
-               INSPECT PROPERTY-VALUE REPLACING TRAILING "}" BY SPACES
-               MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
-
-               STRING PROPERTY-VALUE DELIMITED BY SIZE INTO ENV-NAME
-
-               INVOKE SYSTEM-CLASS "getenv"
-                   USING ENV-NAME
-                   RETURNING ENV-VAL
-
-               IF PROPERTY-NAME = "db.url"
-                   MOVE FUNCTION JAVA-STRING-TO-NATIVE(ENV-VAL) TO DB-URL
-               ELSE IF PROPERTY-NAME = "db.user"
-                   MOVE FUNCTION JAVA-STRING-TO-NATIVE(ENV-VAL) TO DB-USER
-               ELSE IF PROPERTY-NAME = "db.pass"
-                   MOVE FUNCTION JAVA-STRING-TO-NATIVE(ENV-VAL) TO DB-PASS
                END-IF
            ELSE
                IF PROPERTY-NAME = "db.url"
