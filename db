@@ -72,26 +72,106 @@ IDENTIFICATION DIVISION.
 
 
 
-01  java-system-class    object reference class "java.lang.System".
-       01  env-var-name         string.
-       01  env-var-value        string.
 
-       ...
+  IDENTIFICATION DIVISION.
+       PROGRAM-ID. ReadEnvProps.
 
-       *> Extract "DB_URL" from ${DB_URL}
-       MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
-       INSPECT PROPERTY-VALUE REPLACING LEADING "${" BY SPACES
-       INSPECT PROPERTY-VALUE REPLACING TRAILING "}" BY SPACES
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
 
-       STRING PROPERTY-VALUE DELIMITED BY SIZE INTO env-var-name
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
 
-       *> Use System.getenv("DB_URL")
-       INVOKE java-system-class "getenv" USING env-var-name RETURNING env-var-value
+       01  FILE-READER             OBJECT REFERENCE CLASS "java.io.BufferedReader".
+       01  FILE-READER-RDR         OBJECT REFERENCE CLASS "java.io.FileReader".
+       01  LINE-STR                OBJECT REFERENCE CLASS "java.lang.String".
+       01  ENV-VAL                 OBJECT REFERENCE CLASS "java.lang.String".
+       01  ENV-NAME                OBJECT REFERENCE CLASS "java.lang.String".
+       01  SYSTEM-CLASS            OBJECT REFERENCE CLASS "java.lang.System".
 
-       IF PROPERTY-NAME = "db.url"
-           MOVE FUNCTION JAVA-STRING-TO-NATIVE(env-var-value) TO DB-URL
-       ELSE IF PROPERTY-NAME = "db.user"
-           MOVE FUNCTION JAVA-STRING-TO-NATIVE(env-var-value) TO DB-USER
-       ELSE IF PROPERTY-NAME = "db.pass"
-           MOVE FUNCTION JAVA-STRING-TO-NATIVE(env-var-value) TO DB-PASS
-       END-IF
+       01  COBOL-LINE              PIC X(300).
+       01  PROPERTY-NAME           PIC X(100).
+       01  PROPERTY-VALUE          PIC X(200).
+
+       01  DB-URL                  PIC X(200).
+       01  DB-USER                 PIC X(100).
+       01  DB-PASS                 PIC X(100).
+
+       01  FILE-PATH               PIC X(100) VALUE "app/meta/application.properties".
+
+       PROCEDURE DIVISION.
+
+       MAIN-LOGIC.
+           *> Open file reader
+           INVOKE CLASS "java.io.FileReader"
+               USING FILE-PATH
+               RETURNING FILE-READER-RDR
+
+           *> Wrap in buffered reader
+           INVOKE CLASS "java.io.BufferedReader"
+               USING FILE-READER-RDR
+               RETURNING FILE-READER
+
+           PERFORM UNTIL FILE-READER = NULL
+               INVOKE FILE-READER "readLine"
+                   RETURNING LINE-STR
+
+               IF LINE-STR = NULL
+                   EXIT PERFORM
+               END-IF
+
+               MOVE FUNCTION JAVA-STRING-TO-NATIVE(LINE-STR) TO COBOL-LINE
+
+               IF COBOL-LINE(1:1) = "#" OR COBOL-LINE = SPACES
+                   CONTINUE
+               ELSE
+                   PERFORM PARSE-AND-RESOLVE
+               END-IF
+           END-PERFORM
+
+           INVOKE FILE-READER "close"
+
+           DISPLAY "======================"
+           DISPLAY "DB URL  : " DB-URL
+           DISPLAY "DB USER : " DB-USER
+           DISPLAY "DB PASS : " DB-PASS
+           DISPLAY "======================"
+
+           STOP RUN.
+
+       PARSE-AND-RESOLVE.
+           UNSTRING COBOL-LINE DELIMITED BY "="
+               INTO PROPERTY-NAME PROPERTY-VALUE
+           END-UNSTRING
+
+           *> Trim whitespace
+           MOVE FUNCTION TRIM(PROPERTY-NAME) TO PROPERTY-NAME
+           MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
+
+           IF PROPERTY-VALUE(1:2) = "${"
+               INSPECT PROPERTY-VALUE REPLACING LEADING "${" BY SPACES
+               INSPECT PROPERTY-VALUE REPLACING TRAILING "}" BY SPACES
+               MOVE FUNCTION TRIM(PROPERTY-VALUE) TO PROPERTY-VALUE
+
+               STRING PROPERTY-VALUE DELIMITED BY SIZE INTO ENV-NAME
+
+               INVOKE SYSTEM-CLASS "getenv"
+                   USING ENV-NAME
+                   RETURNING ENV-VAL
+
+               IF PROPERTY-NAME = "db.url"
+                   MOVE FUNCTION JAVA-STRING-TO-NATIVE(ENV-VAL) TO DB-URL
+               ELSE IF PROPERTY-NAME = "db.user"
+                   MOVE FUNCTION JAVA-STRING-TO-NATIVE(ENV-VAL) TO DB-USER
+               ELSE IF PROPERTY-NAME = "db.pass"
+                   MOVE FUNCTION JAVA-STRING-TO-NATIVE(ENV-VAL) TO DB-PASS
+               END-IF
+           ELSE
+               IF PROPERTY-NAME = "db.url"
+                   MOVE PROPERTY-VALUE TO DB-URL
+               ELSE IF PROPERTY-NAME = "db.user"
+                   MOVE PROPERTY-VALUE TO DB-USER
+               ELSE IF PROPERTY-NAME = "db.pass"
+                   MOVE PROPERTY-VALUE TO DB-PASS
+               END-IF
+           END-IF.
