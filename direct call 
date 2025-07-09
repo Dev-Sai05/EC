@@ -1,0 +1,65 @@
+In Visual COBOL for Eclipse, the Direct Call feature allows your Java or COBOL JVM code to directly call a native COBOL program (compiled to .gnt or .int) without needing an intermediate wrapper or external executable. It is a performance-optimized feature useful in mixed-language applications (Java ↔ COBOL), particularly when you want to call native COBOL logic directly from JVM COBOL code or Java code.
+
+
+---
+
+🔹 Use Case
+
+If you have a native COBOL program compiled to .gnt, and you're working in a COBOL JVM or Java project, Direct Call allows you to invoke that native COBOL program directly, without launching a separate process or external call.
+
+
+---
+
+🔹 Why use Direct Call?
+
+Improves performance over spawning a separate process.
+
+Tight integration between JVM and native COBOL.
+
+Used when business logic is implemented in native COBOL but needs to be accessed in Java or JVM COBOL projects.
+
+
+
+---
+
+🔹 How It Works
+
+1. You compile your native COBOL programs using cbllink or cob to generate .gnt or .int files.
+
+
+2. These files must be placed in the COBPATH so they can be located at runtime.
+
+
+3. In the JVM COBOL or Java code, you use a CALL statement with the name of the native program.
+
+
+
+
+---
+
+✅ Requirements
+
+Native COBOL program compiled to .gnt or .int.
+
+Program placed in a location available via COBPATH.
+
+JVM project with Direct Call support enabled.
+
+Native and JVM runtimes must be compatible (64-bit vs 32-bit, etc.).
+
+
+
+---
+
+🔹 Enabling Direct Call in Visual COBOL Eclipse
+
+1. Right-click your JVM project > Properties
+
+
+2. Go to Micro Focus > Build Configuration > COBOL
+
+
+3. Under COBOL JVM, enable Support for Direct Calls to Native COBOL
+
+
+4. Ensure your runtime path includes native libraries (set COBPATH, LD_LIBRARY_PATH, etc., if needed)
